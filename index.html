@@ -55,6 +55,7 @@ label{font-weight:600}
 </head>
 <body>
 <main id="app"></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
 var W=[
 {t:"Variables",e:"📦",l:"Une variable est une boîte avec un nom. <code>const</code> pour une valeur fixe, <code>let</code> pour une valeur qui change.<br><code>const ville = \"Abidjan\";</code>",c:[
@@ -283,16 +284,39 @@ var W=[
 ];
 var L=[];W.forEach(function(w,wi){w.c.forEach(function(c,ci){c.w=wi;c.id=L.length;L.push(c)})});
 var S={done:[],xp:0};
+var SB_URL="https://rwpztdrjusvckxkszepn.supabase.co",SB_KEY="sb_publishable_vlqOJMhsHjZYpSlAM2r3PA_ETHQuDV1",sb=null,UID=null,UMAIL="",UPS="",tm=null;
+try{if(SB_URL&&SB_KEY&&window.supabase)sb=supabase.createClient(SB_URL,SB_KEY)}catch(e){}
 var KEY="jsq",ME=null;
 function loadS(){S={done:[],xp:0};try{var r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)}catch(e){}S.miss=S.miss||[];if(!S.start){S.start=Date.now();save()}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}sync()}
+function sync(){if(!sb||!UID)return;clearTimeout(tm);tm=setTimeout(function(){sb.from("profiles").upsert({id:UID,email:UMAIL,pseudo:UPS,progress:S,xp:S.xp,done_count:S.done.length,last_seen:new Date().toISOString()}).then(function(){},function(){})},800)}
 var app=document.getElementById("app");
 function open_(id){return id===0||S.done.indexOf(id-1)>-1}
 function cur(){for(var i=0;i<L.length;i++)if(S.done.indexOf(i)<0)return i;return -1}
+async function enterCloud(u){
+ UID=u.id;UMAIL=u.email||"";UPS=((u.user_metadata&&u.user_metadata.pseudo)||UMAIL.split("@")[0]).replace(/[^A-Za-z0-9_À-ÿ -]/g,"").slice(0,16)||"joueur";
+ ME=UPS;KEY="jsq:"+UID;loadS();
+ try{var r=await sb.from("profiles").select("progress").eq("id",UID).maybeSingle();var p=r.data&&r.data.progress;
+  if(p&&Array.isArray(p.done)&&p.done.length>=S.done.length){S=p;S.miss=S.miss||[];S.start=S.start||Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}else sync();
+ }catch(e){}
+ home();
+}
+function cloudLogin(){
+ app.innerHTML='<header><h1>🎮 JS Quest</h1></header><section class="plan"><h2>Connexion</h2><label for="ce">E-mail</label><input id="ce" type="email" autocomplete="email"><label for="cp">Mot de passe (6 caractères minimum)</label><input id="cp" type="password" autocomplete="current-password"><label for="cn">Pseudo (pour créer un compte)</label><input id="cn" maxlength="16"><p><label><input type="checkbox" id="cc" style="width:auto;margin-right:8px">J’accepte que mon e-mail, mon pseudo et ma progression soient enregistrés pour faire fonctionner mon compte.</label></p><div id="cm" role="status"></div><div class="row"><button class="btn" id="c1">Se connecter</button><button class="btn alt" id="c2">Créer mon compte</button><button class="btn alt" id="c3">Recevoir un lien par e-mail</button></div></section>';
+ var m=document.getElementById("cm");
+ function say(t,ok){m.className="fb "+(ok?"ok":"no");m.textContent=t}
+ function v(id){return document.getElementById(id).value.trim()}
+ function pw(){return document.getElementById("cp").value}
+ function okc(){if(document.getElementById("cc").checked)return true;say("Coche la case d’acceptation pour créer un compte.");return false}
+ document.getElementById("c1").onclick=async function(){var r=await sb.auth.signInWithPassword({email:v("ce"),password:pw()});if(r.error)say("Connexion impossible : "+r.error.message);else enterCloud(r.data.user)};
+ document.getElementById("c2").onclick=async function(){if(!okc())return;var p=v("cn");if(p.length<2){say("Choisis un pseudo (2 caractères minimum).");return}var r=await sb.auth.signUp({email:v("ce"),password:pw(),options:{data:{pseudo:p}}});if(r.error)say("Création impossible : "+r.error.message);else if(r.data.session)enterCloud(r.data.user);else say("Compte créé ! Vérifie ta boîte mail pour confirmer, puis connecte-toi.",true)};
+ document.getElementById("c3").onclick=async function(){if(!okc())return;var r=await sb.auth.signInWithOtp({email:v("ce"),options:{emailRedirectTo:location.href.split("#")[0],data:{pseudo:v("cn")}}});if(r.error)say("Envoi impossible : "+r.error.message);else say("Lien envoyé ! Ouvre ta boîte mail et clique dessus.",true)};
+}
+function boot(){if(!sb){login();return}sb.auth.getSession().then(function(r){var s=r.data&&r.data.session;if(s)enterCloud(s.user);else login()},function(){login()})}
 function users(){try{return JSON.parse(localStorage.getItem("jsq_users")||"{}")}catch(e){return {}}}
 async function hp(s){try{var b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("jsq:"+s));return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,"0")}).join("")}catch(e){return "p"+s}}
 function enter(n){ME=n;KEY="jsq:"+n;try{localStorage.setItem("jsq_cur",n)}catch(e){}loadS();home()}
-function login(){
+function login(){if(sb)return cloudLogin();
  var U=users(),ns=Object.keys(U),last="";try{last=localStorage.getItem("jsq_cur")||""}catch(e){}
  var h='<header><h1>🎮 JS Quest</h1></header><section class="plan"><h2>Connexion</h2><p class="sub">Crée un compte (pseudo + code à 4 chiffres) pour garder ta progression. Les comptes sont enregistrés dans ce navigateur, sur cet appareil.</p>';
  if(ns.length){h+='<div class="row">';ns.forEach(function(n){h+='<button class="btn alt acc" data-n="'+n+'">👤 '+n+'</button>'});h+='</div><p></p>'}
@@ -310,8 +334,13 @@ var P=[[`Variables`,[0]],[`Conditions`,[1]],[`Boucles`,[2]],[`Tableaux`,[3]],[`F
 function ids(ws){return L.filter(function(c){return ws.indexOf(c.w)>-1}).map(function(c){return c.id})}
 function dayDone(d){return ids(d[1]).every(function(i){return S.done.indexOf(i)>-1})&&(!d[2]||!S.miss.length)}
 function dayGo(d){var a=ids(d[1]),c=cur();for(var i=0;i<a.length;i++)if(S.done.indexOf(a[i])<0)return c<0?a[i]:Math.min(a[i],c);return a[0]}
+function resumeHtml(){
+ if(S.done.length>=L.length)return '';
+ var r=(S.last!=null&&S.done.indexOf(S.last)<0&&open_(S.last))?S.last:cur(),c=L[r];
+ return '<section class="plan"><button class="btn" id="rs2" data-id="'+r+'">▶ '+(S.done.length?'Reprendre là où tu t’es arrêté':'Commencer')+' : défi '+(r+1)+' · '+W[c.w].t+'</button></section>';
+}
 function planHtml(){
- var t=Math.min(14,Math.floor((Date.now()-S.start)/864e5)+1),h='<section class="plan"><h2>📅 Ton plan en 14 jours</h2><p class="sub">20 à 40 min par jour : lis la leçon, essaie sans indice, lis la correction si tu bloques, puis refais le défi raté le lendemain.</p>';
+ var t=Math.min(14,Math.floor((Date.now()-S.start)/864e5)+1),h=resumeHtml()+'<section class="plan"><h2>📅 Ton plan en 14 jours</h2><p class="sub">20 à 40 min par jour : lis la leçon, essaie sans indice, lis la correction si tu bloques, puis refais le défi raté le lendemain.</p>';
  P.forEach(function(d,i){h+='<button class="btn alt pl'+(i+1===t?' today':'')+'" data-d="'+i+'">'+(dayDone(d)?'✅':'⬜')+' Jour '+(i+1)+' : '+d[0]+(i+1===t?' (aujourd’hui)':'')+'</button>'});
  if(S.miss.length)h+='<button class="btn" id="rv">🔁 Réviser mes erreurs ('+S.miss.length+')</button>';
  return h+'</section>';
@@ -324,16 +353,19 @@ function home(){rev=false;
   w.c.forEach(function(c){var d=S.done.indexOf(c.id)>-1,k=d?'done':(c.id===n?'cur':'');
    h+='<button class="dot '+k+'" data-id="'+c.id+'"'+(open_(c.id)?'':' disabled')+' aria-label="Défi '+(c.id+1)+'">'+(d?'✓':(open_(c.id)?c.id+1:'🔒'))+'</button>'});
   h+='</div></section>'});
- h+='<p class="sub"><button class="btn alt" id="rs">Recommencer à zéro</button></p>';
+ h+='<p class="sub"><button class="btn alt" id="ex">💾 Sauvegarder (code)</button> <button class="btn alt" id="im">📥 Restaurer</button> <button class="btn alt" id="rs">Recommencer à zéro</button></p>';
  app.innerHTML=h;
  app.querySelectorAll(".dot").forEach(function(b){b.onclick=function(){play(+b.dataset.id)}});
  app.querySelectorAll(".pl").forEach(function(b){b.onclick=function(){play(dayGo(P[+b.dataset.d]))}});
  var rv=document.getElementById("rv");if(rv)rv.onclick=function(){rev=true;play(S.miss[0])};
- document.getElementById("lo").onclick=login;
+ document.getElementById("lo").onclick=function(){if(sb&&UID){sb.auth.signOut().then(function(){UID=null;login()})}else login()};
+ var rs2=document.getElementById("rs2");if(rs2)rs2.onclick=function(){play(+rs2.dataset.id)};
+ document.getElementById("ex").onclick=function(){prompt("Copie ce code et garde-le : il permet de restaurer ta progression sur un autre appareil.",btoa(unescape(encodeURIComponent(JSON.stringify(S)))))};
+ document.getElementById("im").onclick=function(){var c=prompt("Colle ton code de sauvegarde :");if(!c)return;try{var o=JSON.parse(decodeURIComponent(escape(atob(c.trim()))));if(!Array.isArray(o.done))throw 0;S=o;S.miss=S.miss||[];S.start=S.start||Date.now();save();home()}catch(e){alert("Code invalide.")}};
  document.getElementById("rs").onclick=function(){if(confirm("Effacer toute ta progression ?")){S={done:[],xp:0,miss:[],start:Date.now()};save();home()}};
  window.scrollTo(0,0);
 }
-function play(id){
+function play(id){S.last=id;save();
  var c=L[id],w=W[c.w],h='<header><button class="btn alt" id="bk">← Carte</button><div class="xp">'+S.xp+' XP</div></header>';
  h+='<h2>'+w.e+' '+w.t+' · défi '+(id+1)+'/'+L.length+'</h2><div class="lesson">'+w.l+'</div>';
  if(c.q){h+='<p><b>'+c.q+'</b></p><div class="opts">';c.o.forEach(function(o,i){h+='<button class="btn alt opt" data-i="'+i+'">'+o+'</button>'});h+='</div>'}
@@ -372,7 +404,7 @@ function play(id){
   };
  }
 }
-login();
+boot();
 </script>
 </body>
 </html>

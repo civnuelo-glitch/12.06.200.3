@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JS Quest – apprends JavaScript en jouant</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff0f6;--card:#fff;--ink:#3a1030;--mute:#8a5a78;--blue:#d6307c;--sun:#3cc9b5;--ok:#17a665;--bad:#d9381e;--line:#f6cfe0;--code:#2a0f24;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2a0f24;--card:#3a1832;--ink:#fff0f7;--mute:#d6a5c3;--line:#5c2c52;--code:#1a0916}}
+:root[data-theme="dark"]{--bg:#2a0f24;--card:#3a1832;--ink:#fff0f7;--mute:#d6a5c3;--line:#5c2c52;--code:#1a0916}
+*{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Fredoka",system-ui,sans-serif;font-size:18px;line-height:1.5}
+main{max-width:720px;margin:0 auto;padding:16px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+h1{font-size:2rem;margin:0;font-weight:700}
+.xp{background:var(--sun);color:#14183a;font-weight:700;padding:6px 14px;border-radius:999px;white-space:nowrap}
+.sub{color:var(--mute);margin:0 0 20px}
+.world{background:var(--card);border:3px solid var(--line);border-radius:22px;padding:16px 18px;margin-bottom:14px}
+.world h2{margin:0 0 10px;font-size:1.25rem;display:flex;align-items:center;gap:10px}
+.world h2 span{font-size:1.7rem}
+.dots{display:flex;gap:10px}
+.dot{width:54px;height:54px;border-radius:50%;border:3px solid var(--line);background:var(--bg);color:var(--ink);font:700 1.1rem "Fredoka",sans-serif;cursor:pointer}
+.dot:disabled{opacity:.4;cursor:not-allowed}
+.dot.done{background:var(--ok);border-color:var(--ok);color:#fff}
+.dot.cur{background:var(--blue);border-color:var(--blue);color:#fff;transform:scale(1.1)}
+button:focus-visible,textarea:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.btn{font:700 1rem "Fredoka",sans-serif;border:0;border-radius:14px;padding:12px 20px;cursor:pointer;background:var(--blue);color:#fff}
+.btn.alt{background:var(--card);color:var(--ink);border:3px solid var(--line)}
+.btn:disabled{opacity:.5}
+.lesson{background:var(--card);border-left:8px solid var(--sun);border-radius:14px;padding:12px 16px;margin:12px 0}
+code{background:var(--code);color:#ffc2de;padding:1px 7px;border-radius:6px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em}
+textarea{width:100%;min-height:170px;background:var(--code);color:#e8ecff;border:3px solid var(--line);border-radius:14px;padding:12px;font:15px/1.5 ui-monospace,Menlo,Consolas,monospace;resize:vertical}
+.opts{display:grid;gap:10px;margin:12px 0}
+.opt{text-align:left}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.fb{margin-top:12px;padding:12px 16px;border-radius:14px;font-weight:600;overflow-wrap:anywhere}
+.fb.ok{background:var(--ok);color:#fff;animation:pop .35s}
+.fb.no{background:var(--bad);color:#fff}
+.hint{color:var(--mute);margin-top:10px}
+.plan{background:var(--card);border:3px solid var(--line);border-radius:22px;padding:14px 18px;margin-bottom:14px}
+.plan h2{margin:0 0 6px}
+.pl{display:block;width:100%;text-align:left;margin-bottom:8px}
+.pl.today{border-color:var(--blue)}
+input{width:100%;font:inherit;padding:10px 12px;border-radius:12px;border:3px solid var(--line);background:var(--bg);color:var(--ink);margin:4px 0 12px}
+label{font-weight:600}
+.corr{background:var(--card);border:3px solid var(--blue);border-radius:16px;padding:4px 16px 12px;margin-top:14px}
+.corr h3{margin:10px 0 0}
+.corr pre{background:var(--code);color:#e8ecff;padding:12px;border-radius:12px;overflow-x:auto;font:14px/1.5 ui-monospace,Menlo,Consolas,monospace;margin:0}
+@keyframes pop{0%{transform:scale(.9)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.fb.ok{animation:none}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+var W=[
+{t:"Variables",e:"📦",l:"Une variable est une boîte avec un nom. <code>const</code> pour une valeur fixe, <code>let</code> pour une valeur qui change.<br><code>const ville = \"Abidjan\";</code>",c:[
+ {q:"Quel mot-clé sert à créer une valeur qui ne change <b>jamais</b> ?",o:["const","let","if"],a:0,x:"<code>const</code> crée une constante : une fois la valeur donnée, on ne peut plus la changer (sinon JavaScript affiche une erreur). <code>let</code> crée une variable modifiable. <code>if</code> n'est pas un mot-clé de variable : il sert aux conditions."},
+ {p:"Crée une constante <code>prenom</code> qui contient ton prénom (entre guillemets).",s:"// écris ton code ici\n",t:[["typeof prenom===\"string\"&&prenom.length>0",true]],h:"const prenom = \"...\";",x:"Un texte s'écrit entre guillemets. On déclare avec <code>const</code>, on donne un nom, puis <code>=</code> et la valeur. Le test vérifie que <code>prenom</code> est bien du texte non vide. Erreurs fréquentes : oublier les guillemets (JavaScript croirait que c'est un nom de variable) ou écrire le nom avec une faute, car les majuscules comptent.",r:"const prenom = \"Awa\";"},
+ {p:"Crée une constante <code>total</code> égale à <code>prix * quantite</code>.",s:"const prix = 1500;\nconst quantite = 4;\n",t:[["total",6000]],h:"const total = prix * quantite;",x:"Une variable peut être calculée à partir d'autres : <code>prix * quantite</code> donne 1500 × 4 = 6000, et on range le résultat dans <code>total</code>. Le nom doit s'écrire exactement <code>total</code>.",r:"const total = prix * quantite;"}]},
+{t:"Conditions",e:"🚦",l:"<code>if</code> choisit quoi faire selon une condition. Compare avec <code>===</code>, <code>&gt;</code>, <code>&gt;=</code>.<br><code>if (age &gt;= 18) { ... } else { ... }</code>",c:[
+ {q:"Que renvoie <code>5 === \"5\"</code> ?",o:["true","false","une erreur"],a:1,x:"<code>===</code> compare la valeur <b>et</b> le type. Ici 5 est un nombre et « 5 » entre guillemets est du texte : ce n'est pas strictement égal, donc le résultat est <code>false</code>. Avec <code>==</code> (à éviter), JavaScript convertirait le texte en nombre et donnerait <code>true</code>."},
+ {p:"Écris la fonction <code>estMajeur(age)</code> qui renvoie <code>true</code> si l'âge est 18 ou plus, sinon <code>false</code>.",s:"function estMajeur(age) {\n  // à toi\n}\n",t:[["estMajeur(18)",true],["estMajeur(17)",false],["estMajeur(40)",true]],h:"return age >= 18;",x:"La condition <code>age &gt;= 18</code> est déjà un booléen : elle vaut <code>true</code> ou <code>false</code>. On peut donc la renvoyer directement avec <code>return</code>. Piège : avec <code>&gt;</code> seul, 18 donnerait <code>false</code> alors qu'à 18 ans on est majeur. Il faut <code>&gt;=</code>.",r:"function estMajeur(age) {\n  return age >= 18;\n}"},
+ {p:"Écris <code>signe(n)</code> : renvoie <code>\"positif\"</code>, <code>\"négatif\"</code> ou <code>\"zéro\"</code>.",s:"function signe(n) {\n  \n}\n",t:[["signe(5)","positif"],["signe(-2)","négatif"],["signe(0)","zéro"]],h:"Utilise if, else if, else avec return.",x:"On teste les cas dans l'ordre : si <code>n &gt; 0</code>, on renvoie « positif » ; sinon si <code>n &lt; 0</code>, « négatif » ; sinon c'est forcément zéro. <code>return</code> arrête la fonction dès qu'il s'exécute, donc pas besoin de <code>else</code> ensuite. Vérifie l'orthographe exacte des mots, accents compris.",r:"function signe(n) {\n  if (n > 0) return \"positif\";\n  if (n < 0) return \"négatif\";\n  return \"zéro\";\n}"}]},
+{t:"Boucles",e:"🔁",l:"Une boucle répète du code.<br><code>for (let i = 1; i &lt;= 3; i++) { console.log(i); }</code><br>Départ, condition, pas : <code>i</code> va de 1 à 3.",c:[
+ {q:"Combien de fois s'exécute <code>for (let i = 0; i &lt; 3; i++)</code> ?",o:["2 fois","3 fois","4 fois"],a:1,x:"On part de <code>i = 0</code> et on continue tant que <code>i &lt; 3</code>. Donc i vaut 0, 1, 2 : à 3 la condition devient fausse et la boucle s'arrête. Cela fait 3 tours. Avec <code>&lt;=</code>, il y en aurait eu 4."},
+ {p:"Écris <code>somme(n)</code> qui renvoie 1 + 2 + ... + n.",s:"function somme(n) {\n  let total = 0;\n  // ta boucle ici\n  return total;\n}\n",t:[["somme(4)",10],["somme(10)",55]],h:"for (let i = 1; i <= n; i++) { total += i; }",x:"<code>total</code> démarre à 0. À chaque tour, on ajoute <code>i</code> avec <code>total += i</code>. Pour n = 4 : 0+1 = 1, +2 = 3, +3 = 6, +4 = 10. La boucle va de 1 à <b>n inclus</b> (<code>i &lt;= n</code>). Le <code>return total</code> final renvoie le résultat.",r:"function somme(n) {\n  let total = 0;\n  for (let i = 1; i <= n; i++) {\n    total += i;\n  }\n  return total;\n}"},
+ {p:"Écris <code>multiplesDe3(max)</code> : un tableau des multiples de 3 jusqu'à <code>max</code>. Ex : max=10 donne <code>[3,6,9]</code>.",s:"function multiplesDe3(max) {\n  const res = [];\n  \n  return res;\n}\n",t:[["JSON.stringify(multiplesDe3(10))","[3,6,9]"],["JSON.stringify(multiplesDe3(2))","[]"]],h:"if (i % 3 === 0) { res.push(i); }",x:"On parcourt les nombres de 1 à <code>max</code>. <code>i % 3 === 0</code> veut dire : le reste de la division par 3 est 0, donc i est un multiple de 3. Dans ce cas, <code>res.push(i)</code> ajoute i au tableau. Pour max = 2, aucun nombre ne passe : on renvoie <code>[]</code>.",r:"function multiplesDe3(max) {\n  const res = [];\n  for (let i = 1; i <= max; i++) {\n    if (i % 3 === 0) {\n      res.push(i);\n    }\n  }\n  return res;\n}"}]},
+{t:"Tableaux",e:"🧰",l:"<code>map</code> transforme chaque élément, <code>filter</code> garde ceux qui passent un test.<br><code>[1,2,3].map(x =&gt; x + 1)</code> donne <code>[2,3,4]</code>",c:[
+ {q:"Que donne <code>[1,2,3].map(x =&gt; x * 2)</code> ?",o:["[1,2,3]","[2,4,6]","6"],a:1,x:"<code>map</code> applique la fonction à chaque élément et renvoie un <b>nouveau tableau</b> de même taille : 1×2, 2×2, 3×2 donnent [2,4,6]. Il ne renvoie pas un seul nombre (c'est le rôle de <code>reduce</code>) et ne modifie pas le tableau d'origine."},
+ {p:"Écris <code>doubler(tab)</code> qui renvoie un nouveau tableau avec chaque nombre doublé (avec <code>map</code>).",s:"function doubler(tab) {\n  \n}\n",t:[["JSON.stringify(doubler([1,2,3]))","[2,4,6]"]],h:"return tab.map(x => x * 2);",x:"<code>tab.map(x =&gt; x * 2)</code> parcourt le tableau et, pour chaque élément <code>x</code>, calcule <code>x * 2</code>. N'oublie pas le <code>return</code> : sans lui, la fonction renvoie <code>undefined</code>. <code>map</code> ne modifie pas le tableau d'origine.",r:"function doubler(tab) {\n  return tab.map(x => x * 2);\n}"},
+ {p:"Écris <code>pairs(tab)</code> qui garde seulement les nombres pairs (avec <code>filter</code>).",s:"function pairs(tab) {\n  \n}\n",t:[["JSON.stringify(pairs([1,2,3,4]))","[2,4]"],["JSON.stringify(pairs([7,9]))","[]"]],h:"return tab.filter(x => x % 2 === 0);",x:"<code>filter</code> garde seulement les éléments pour lesquels la fonction renvoie <code>true</code>. Un nombre est pair si <code>x % 2 === 0</code> (reste 0 quand on divise par 2). Différence avec <code>map</code> : <code>filter</code> ne transforme pas les valeurs, il trie.",r:"function pairs(tab) {\n  return tab.filter(x => x % 2 === 0);\n}"}]},
+{t:`Fonctions`,e:`🧩`,l:`Une fonction se déclare avec <code>function</code> ou en version <b>fléchée</b> : <code>const somme = (a, b) =&gt; a + b;</code><br>Un paramètre peut avoir une valeur par défaut : <code>(nom = 'ami')</code>.`,c:[
+ {q:`Que renvoie <code>carre(4)</code> avec <code>const carre = x =&gt; x * x;</code> ?`,o:[`16`,`8`,`undefined`],a:0,x:`La fonction fléchée multiplie x par lui-même : 4 × 4 = 16. Sans accolades, la valeur après <code>=&gt;</code> est renvoyée automatiquement.`},
+ {p:`Écris la fonction fléchée <code>aire(l, h)</code> qui renvoie la largeur × la hauteur.`,s:`const aire = (l, h) => {
+  
+};
+`,t:[[`aire(3,4)`,12],[`aire(5,2)`,10]],h:`return l * h;`,x:`Avec des accolades, il faut écrire <code>return</code> sinon la fonction renvoie <code>undefined</code>. Sans accolades, <code>(l, h) =&gt; l * h</code> suffit.`,r:`const aire = (l, h) => {
+  return l * h;
+};`},
+ {p:`Écris <code>salue(prenom)</code> qui renvoie <code>Bonjour</code> + espace + le prénom. Sans argument, le prénom vaut <code>ami</code>.`,s:`function salue(prenom) {
+  
+}
+`,t:[[`salue('Awa')`,`Bonjour Awa`],[`salue()`,`Bonjour ami`]],h:`function salue(prenom = 'ami') ...`,x:`<code>prenom = 'ami'</code> dans les parenthèses donne une valeur par défaut, utilisée quand on n'envoie rien. Ensuite on assemble le texte avec un template literal ou un +.`,r:`function salue(prenom = 'ami') {
+  return 'Bonjour ' + prenom;
+}`}]},
+{t:`Objets`,e:`🗂️`,l:`Un objet range des données sous forme <b>clé: valeur</b> : <code>const p = { nom: 'Awa', age: 20 };</code><br>On lit avec <code>p.nom</code> ou <code>p['age']</code>.`,c:[
+ {q:`Comment lire la propriété <code>age</code> de l'objet <code>eleve</code> ?`,o:[`eleve.age`,`eleve(age)`,`eleve->age`],a:0,x:`On accède à une propriété avec un point : <code>eleve.age</code> (ou <code>eleve['age']</code>). Les parenthèses servent à appeler une fonction, et <code>-&gt;</code> n'existe pas en JavaScript.`},
+ {p:`Écris <code>creerEleve(nom, age)</code> qui renvoie un objet avec les propriétés <code>nom</code> et <code>age</code>.`,s:`function creerEleve(nom, age) {
+  
+}
+`,t:[[`creerEleve('Awa',20).nom`,`Awa`],[`creerEleve('Koffi',17).age`,17]],h:`return { nom: nom, age: age };`,x:`On renvoie un objet entre accolades. Quand la clé et la variable ont le même nom, on peut écrire <code>{ nom, age }</code>.`,r:`function creerEleve(nom, age) {
+  return { nom, age };
+}`},
+ {p:`Écris <code>nomsDesEleves(eleves)</code> qui reçoit un tableau d'objets <code>{nom}</code> et renvoie le tableau des noms.`,s:`function nomsDesEleves(eleves) {
+  
+}
+`,t:[[`JSON.stringify(nomsDesEleves([{nom:'A'},{nom:'B'}]))`,`["A","B"]`]],h:`return eleves.map(e => e.nom);`,x:`<code>map</code> parcourt chaque objet <code>e</code> et renvoie seulement <code>e.nom</code> : on obtient un nouveau tableau de noms.`,r:`function nomsDesEleves(eleves) {
+  return eleves.map(e => e.nom);
+}`}]},
+{t:`Textes`,e:`✂️`,l:`Méthodes utiles : <code>length</code>, <code>toUpperCase()</code>, <code>includes('a')</code>, <code>split('')</code>, <code>join('')</code>, <code>slice(0, 3)</code>, <code>trim()</code>.`,c:[
+ {q:`Que vaut <code>'Bonjour'.length</code> ?`,o:[`6`,`7`,`8`],a:1,x:`Bonjour a 7 lettres : B-o-n-j-o-u-r. <code>length</code> est une propriété, sans parenthèses.`},
+ {p:`Écris <code>inverser(texte)</code> qui renvoie le texte à l'envers. Ex : <code>abc</code> donne <code>cba</code>.`,s:`function inverser(texte) {
+  
+}
+`,t:[[`inverser('abc')`,`cba`],[`inverser('kayak')`,`kayak`]],h:`split('') puis reverse() puis join('')`,x:`<code>split('')</code> coupe le texte en lettres (tableau), <code>reverse()</code> inverse le tableau, <code>join('')</code> recolle les lettres en texte.`,r:`function inverser(texte) {
+  return texte.split('').reverse().join('');
+}`},
+ {p:`Écris <code>compterVoyelles(texte)</code> : le nombre de lettres a, e, i, o, u dans le texte (en minuscules).`,s:`function compterVoyelles(texte) {
+  let n = 0;
+  
+  return n;
+}
+`,t:[[`compterVoyelles('bonjour')`,3],[`compterVoyelles('xyz')`,0]],h:`for (const lettre of texte) { if ('aeiou'.includes(lettre)) n++; }`,x:`On parcourt chaque lettre avec <code>for...of</code>. <code>'aeiou'.includes(lettre)</code> vaut <code>true</code> si c'est une voyelle, alors on ajoute 1 à <code>n</code>.`,r:`function compterVoyelles(texte) {
+  let n = 0;
+  for (const lettre of texte) {
+    if ('aeiou'.includes(lettre)) n++;
+  }
+  return n;
+}`}]},
+{t:`JS moderne`,e:`✨`,l:`Déstructuration : <code>const [x, y] = [10, 20];</code> et <code>const {nom} = p;</code><br>Spread : <code>[...tab, 4]</code> copie un tableau en ajoutant 4.<br>JSON : <code>JSON.stringify(obj)</code> en texte, <code>JSON.parse(texte)</code> en objet.`,c:[
+ {q:`Que vaut <code>y</code> après <code>const [x, y] = [10, 20];</code> ?`,o:[`10`,`20`,`undefined`],a:1,x:`La déstructuration assigne dans l'ordre : x reçoit 10 (1er élément), y reçoit 20 (2e élément).`},
+ {p:`Écris <code>ajouter(tab, v)</code> qui renvoie un <b>nouveau</b> tableau avec <code>v</code> à la fin, sans modifier <code>tab</code> (avec le spread).`,s:`function ajouter(tab, v) {
+  
+}
+`,t:[[`JSON.stringify(ajouter([1,2],3))`,`[1,2,3]`],[`(()=>{const t=[1];ajouter(t,2);return t.length})()`,1]],h:`return [...tab, v];`,x:`<code>[...tab, v]</code> crée un nouveau tableau qui contient tous les éléments de <code>tab</code> puis v. Avec <code>push</code>, on aurait modifié le tableau d'origine.`,r:`function ajouter(tab, v) {
+  return [...tab, v];
+}`},
+ {p:`Écris <code>lireAge(json)</code> qui reçoit un texte JSON comme <code>{"nom":"Awa","age":20}</code> et renvoie l'âge.`,s:`function lireAge(json) {
+  
+}
+`,t:[[`lireAge('{"nom":"Awa","age":20}')`,20]],h:`JSON.parse(json).age`,x:`<code>JSON.parse</code> transforme le texte en objet JavaScript, dont on lit ensuite la propriété <code>age</code>.`,r:`function lireAge(json) {
+  return JSON.parse(json).age;
+}`}]},
+{t:`Erreurs et classes`,e:`🛡️`,l:`<code>try { ... } catch (e) { ... } finally { ... }</code> gère les erreurs. <code>throw new Error('message')</code> en déclenche une.<br>Une <code>class</code> est un moule d'objets avec un <code>constructor</code> et des méthodes.`,c:[
+ {q:`Quel bloc s'exécute <b>toujours</b>, qu'il y ait une erreur ou non ?`,o:[`finally`,`catch`,`try`],a:0,x:`<code>catch</code> ne s'exécute qu'en cas d'erreur. <code>finally</code> s'exécute dans tous les cas, utile pour nettoyer.`},
+ {p:`Écris <code>diviser(a, b)</code> : si <code>b</code> vaut 0, lance <code>new Error('Division par zéro')</code>, sinon renvoie <code>a / b</code>.`,s:`function diviser(a, b) {
+  
+}
+`,t:[[`diviser(6,3)`,2],[`(()=>{try{diviser(1,0)}catch(e){return e.message}})()`,`Division par zéro`]],h:`if (b === 0) { throw new Error('Division par zéro'); }`,x:`<code>throw</code> arrête la fonction et déclenche une erreur que <code>catch</code> peut attraper. Le texte donné à <code>Error</code> devient <code>e.message</code>.`,r:`function diviser(a, b) {
+  if (b === 0) {
+    throw new Error('Division par zéro');
+  }
+  return a / b;
+}`},
+ {p:`Écris une classe <code>Compteur</code> : <code>valeur</code> commence à 0 dans le constructeur, et la méthode <code>ajouter()</code> l'augmente de 1.`,s:`class Compteur {
+  
+}
+`,t:[[`(()=>{const c=new Compteur();c.ajouter();c.ajouter();return c.valeur})()`,2]],h:`constructor() { this.valeur = 0; }`,x:`<code>constructor</code> s'exécute avec <code>new Compteur()</code>. <code>this</code> désigne l'objet créé : <code>this.valeur</code> est sa propriété, que <code>ajouter()</code> modifie.`,r:`class Compteur {
+  constructor() {
+    this.valeur = 0;
+  }
+  ajouter() {
+    this.valeur++;
+  }
+}`}]},
+{t:`Asynchrone et page web`,e:`⏳`,l:`Une <b>promesse</b> représente un résultat futur. <code>async/await</code> permet de l'attendre : <code>const r = await fetch(url);</code><br>Sur une page, <code>document.querySelector('#id')</code> trouve un élément et <code>addEventListener('click', fn)</code> réagit au clic. Ici, la théorie en QCM ; la pratique se fait dans les deux mondes suivants.`,c:[
+ {q:`Quel mot-clé attend le résultat d'une promesse (dans une fonction <code>async</code>) ?`,o:[`await`,`wait`,`pause`],a:0,x:`<code>await</code> met la fonction en pause jusqu'à ce que la promesse soit résolue, puis donne sa valeur. Il s'utilise dans une fonction déclarée <code>async</code>.`},
+ {q:`Comment réagir au clic sur un bouton ?`,o:[`bouton.addEventListener('click', fn)`,`bouton.click(fn)`,`bouton.listen(fn)`],a:0,x:`<code>addEventListener</code> prend le type d'événement (<code>'click'</code>) puis la fonction à exécuter quand il se produit.`},
+ {q:`Que renvoie <code>fetch(url)</code> ?`,o:[`une Promise`,`directement les données`,`un tableau`],a:0,x:`<code>fetch</code> est asynchrone : il renvoie une promesse de réponse. Avec <code>await</code> on obtient la réponse, puis <code>await reponse.json()</code> donne les données.`}]},
+{t:`DOM : la page web`,e:`🖱️`,l:`Le DOM, c'est la page vue comme des objets JavaScript. <code>el.textContent = 'Salut'</code> change le texte, <code>document.createElement('li')</code> crée un élément, <code>parent.appendChild(enfant)</code> l'ajoute, <code>el.addEventListener('click', fn)</code> réagit au clic.<br>Ici, les éléments te sont donnés en paramètres : le jeu simule les clics et vérifie le résultat.`,c:[
+ {p:`Écris <code>changerTexte(el, texte)</code> qui remplace le texte de l'élément <code>el</code> par <code>texte</code>.`,s:`function changerTexte(el, texte) {
+  
+}
+`,t:[[`(()=>{const e=document.createElement('p');changerTexte(e,'Salut');return e.textContent})()`,`Salut`]],h:`el.textContent = texte;`,x:`<code>textContent</code> est le texte affiché dans un élément : on peut le lire ou, comme ici, lui affecter une nouvelle valeur.`,r:`function changerTexte(el, texte) {
+  el.textContent = texte;
+}`},
+ {p:`Écris <code>activer(bouton, sortie)</code> : à chaque clic sur <code>bouton</code>, le texte de <code>sortie</code> devient le nombre de clics (1, puis 2, puis 3...).`,s:`function activer(bouton, sortie) {
+  let n = 0;
+  
+}
+`,t:[[`(()=>{const b=document.createElement('button'),o=document.createElement('p');activer(b,o);b.click();b.click();b.click();return o.textContent})()`,`3`]],h:`bouton.addEventListener('click', () => { n++; sortie.textContent = n; });`,x:`<code>addEventListener('click', fn)</code> enregistre une fonction exécutée à chaque clic. La variable <code>n</code> est mémorisée entre les clics : on l'augmente puis on l'affiche.`,r:`function activer(bouton, sortie) {
+  let n = 0;
+  bouton.addEventListener('click', () => {
+    n++;
+    sortie.textContent = n;
+  });
+}`},
+ {p:`Écris <code>creerListe(parent, items)</code> : pour chaque texte de <code>items</code>, crée un <code>li</code> contenant ce texte et ajoute-le à <code>parent</code>.`,s:`function creerListe(parent, items) {
+  
+}
+`,t:[[`(()=>{const p=document.createElement('ul');creerListe(p,['a','b']);return p.children.length+p.textContent})()`,`2ab`]],h:`const li = document.createElement('li'); ... parent.appendChild(li);`,x:`Pour chaque élément du tableau : on crée un <code>li</code> avec <code>createElement</code>, on lui donne son texte, puis <code>appendChild</code> l'insère dans le parent.`,r:`function creerListe(parent, items) {
+  for (const texte of items) {
+    const li = document.createElement('li');
+    li.textContent = texte;
+    parent.appendChild(li);
+  }
+}`}]},
+{t:`Asynchrone en pratique`,e:`📡`,l:`Une fonction <code>async</code> renvoie toujours une promesse. Avec <code>await</code>, on attend la valeur : <code>const x = await promesse;</code><br>Schéma de <code>fetch</code> : <code>const rep = await fetch(url); const data = await rep.json();</code><br>Les erreurs d'une promesse s'attrapent avec <code>try/catch</code>. Ici, un faux <code>fetch</code> t'est donné en paramètre.`,c:[
+ {p:`Écris la fonction <code>async doubleApres(promesse)</code> qui attend la promesse (un nombre) et renvoie ce nombre × 2.`,s:`async function doubleApres(promesse) {
+  
+}
+`,t:[[`doubleApres(Promise.resolve(21))`,42]],h:`const n = await promesse; return n * 2;`,x:`<code>await promesse</code> donne la valeur une fois la promesse résolue (ici 21). On la double puis on la renvoie : la fonction <code>async</code> l'enveloppe dans une promesse.`,r:`async function doubleApres(promesse) {
+  const n = await promesse;
+  return n * 2;
+}`},
+ {p:`Écris <code>async lireNom(monFetch)</code> : appelle <code>monFetch('/api/eleve')</code>, lis la réponse avec <code>.json()</code>, et renvoie la propriété <code>nom</code>.`,s:`async function lireNom(monFetch) {
+  
+}
+`,t:[[`lireNom(()=>Promise.resolve({json:()=>Promise.resolve({nom:'Awa'})}))`,`Awa`]],h:`const rep = await monFetch('/api/eleve'); const data = await rep.json();`,x:`Il y a deux attentes : celle de la réponse (<code>await monFetch(...)</code>) puis celle de la lecture du JSON (<code>await rep.json()</code>). C'est exactement le schéma d'un vrai <code>fetch</code>.`,r:`async function lireNom(monFetch) {
+  const rep = await monFetch('/api/eleve');
+  const data = await rep.json();
+  return data.nom;
+}`},
+ {p:`Écris <code>async chargerOuInconnu(monFetch)</code> : comme <code>lireNom</code>, mais si la requête échoue, renvoie <code>inconnu</code>.`,s:`async function chargerOuInconnu(monFetch) {
+  
+}
+`,t:[[`chargerOuInconnu(()=>Promise.resolve({json:()=>Promise.resolve({nom:'Koffi'})}))`,`Koffi`],[`chargerOuInconnu(()=>Promise.reject(new Error('réseau')))`,`inconnu`]],h:`try { ... } catch (e) { return 'inconnu'; }`,x:`Un <code>await</code> sur une promesse rejetée lance une erreur, que <code>try/catch</code> attrape. Toujours prévoir ce cas : un réseau peut échouer.`,r:`async function chargerOuInconnu(monFetch) {
+  try {
+    const rep = await monFetch('/api/eleve');
+    const data = await rep.json();
+    return data.nom;
+  } catch (e) {
+    return 'inconnu';
+  }
+}`}]},
+{t:`Reduce, Set et Map`,e:`🧮`,l:`<code>reduce</code> combine un tableau en une seule valeur : <code>[1,2,3].reduce((acc, x) =&gt; acc + x, 0)</code> donne 6.<br><code>new Set(tab)</code> garde des valeurs uniques ; <code>[...new Set(tab)]</code> redonne un tableau.<br><code>new Map()</code> associe clés et valeurs avec <code>set(cle, val)</code> et <code>get(cle)</code>.`,c:[
+ {p:`Écris <code>total(tab)</code> qui renvoie la somme des nombres du tableau avec <code>reduce</code>.`,s:`function total(tab) {
+  
+}
+`,t:[[`total([1,2,3,4])`,10],[`total([])`,0]],h:`return tab.reduce((acc, x) => acc + x, 0);`,x:`<code>reduce</code> parcourt le tableau avec un accumulateur <code>acc</code> qui démarre à 0 (le 2e argument). À chaque élément, on renvoie le nouvel accumulateur.`,r:`function total(tab) {
+  return tab.reduce((acc, x) => acc + x, 0);
+}`},
+ {p:`Écris <code>unique(tab)</code> qui renvoie le tableau sans doublons, avec un <code>Set</code>.`,s:`function unique(tab) {
+  
+}
+`,t:[[`JSON.stringify(unique([1,2,2,3,1]))`,`[1,2,3]`]],h:`return [...new Set(tab)];`,x:`Un <code>Set</code> refuse les doublons. Le spread <code>[...]</code> le retransforme en tableau, dans l'ordre d'apparition.`,r:`function unique(tab) {
+  return [...new Set(tab)];
+}`},
+ {p:`Écris <code>compterMots(mots)</code> qui renvoie une <code>Map</code> : chaque mot associé à son nombre d'apparitions.`,s:`function compterMots(mots) {
+  const m = new Map();
+  
+  return m;
+}
+`,t:[[`(()=>{const m=compterMots(['a','b','a']);return m.get('a')+'-'+m.get('b')})()`,`2-1`]],h:`m.set(mot, (m.get(mot) || 0) + 1);`,x:`<code>m.get(mot)</code> vaut <code>undefined</code> la première fois : <code>|| 0</code> donne 0, puis on ajoute 1 et on enregistre avec <code>set</code>.`,r:`function compterMots(mots) {
+  const m = new Map();
+  for (const mot of mots) {
+    m.set(mot, (m.get(mot) || 0) + 1);
+  }
+  return m;
+}`}]},
+{t:`Regex et modules`,e:`🔎`,l:`Une <b>regex</b> décrit un motif : <code>/[0-9]/.test('abc1')</code> vaut <code>true</code> ; <code>'a12b7'.match(/[0-9]+/g)</code> donne <code>['12','7']</code> (ou <code>null</code> si rien n'est trouvé).<br>Les <b>modules</b> séparent le code en fichiers : <code>export function f() {}</code> d'un côté, <code>import { f } from './maths.js'</code> de l'autre.`,c:[
+ {p:`Écris <code>contientChiffre(texte)</code> qui renvoie <code>true</code> si le texte contient au moins un chiffre.`,s:`function contientChiffre(texte) {
+  
+}
+`,t:[[`contientChiffre('abc1')`,true],[`contientChiffre('abc')`,false]],h:`return /[0-9]/.test(texte);`,x:`<code>/[0-9]/</code> cherche un caractère entre 0 et 9. La méthode <code>test</code> renvoie directement <code>true</code> ou <code>false</code>.`,r:`function contientChiffre(texte) {
+  return /[0-9]/.test(texte);
+}`},
+ {p:`Écris <code>extraireNombres(texte)</code> qui renvoie le tableau des nombres trouvés dans le texte (en vrais nombres). Aucun nombre : <code>[]</code>.`,s:`function extraireNombres(texte) {
+  
+}
+`,t:[[`JSON.stringify(extraireNombres('a12b7'))`,`[12,7]`],[`JSON.stringify(extraireNombres('abc'))`,`[]`]],h:`const trouves = texte.match(/[0-9]+/g) || [];`,x:`<code>match</code> avec le drapeau <code>g</code> renvoie toutes les correspondances, ou <code>null</code> s'il n'y en a pas : <code>|| []</code> évite l'erreur. Puis <code>map(Number)</code> convertit les textes en nombres.`,r:`function extraireNombres(texte) {
+  const trouves = texte.match(/[0-9]+/g) || [];
+  return trouves.map(Number);
+}`},
+ {q:`Quel mot-clé rend une fonction importable depuis un autre fichier ?`,o:[`export`,`public`,`module`],a:0,x:`On écrit <code>export</code> devant la fonction, puis <code>import { nom } from './fichier.js'</code> dans l'autre fichier. <code>public</code> n'existe pas en JavaScript.`}]},
+{t:`Mini-projet : le panier`,e:`🛒`,l:`Dernier défi : un panier d'achat. Chaque article est un objet <code>{ nom, prix, qte }</code>. Tu vas combiner <code>reduce</code>, <code>filter</code> et <code>map</code>.`,c:[
+ {p:`Écris <code>prixTotal(panier)</code> : la somme de <code>prix * qte</code> de chaque article.`,s:`function prixTotal(panier) {
+  
+}
+`,t:[[`prixTotal([{prix:100,qte:2},{prix:50,qte:1}])`,250],[`prixTotal([])`,0]],h:`panier.reduce((acc, a) => acc + a.prix * a.qte, 0)`,x:`Pour chaque article <code>a</code>, on ajoute <code>a.prix * a.qte</code> à l'accumulateur, qui démarre à 0 pour gérer le panier vide.`,r:`function prixTotal(panier) {
+  return panier.reduce((acc, a) => acc + a.prix * a.qte, 0);
+}`},
+ {p:`Écris <code>produitsChers(panier, seuil)</code> : le tableau des <b>noms</b> des articles dont le prix est supérieur ou égal à <code>seuil</code>.`,s:`function produitsChers(panier, seuil) {
+  
+}
+`,t:[[`JSON.stringify(produitsChers([{nom:'A',prix:10},{nom:'B',prix:90}],50))`,`["B"]`]],h:`filter puis map`,x:`<code>filter</code> garde les articles assez chers, puis <code>map</code> ne retient que leur nom : deux étapes chaînées.`,r:`function produitsChers(panier, seuil) {
+  return panier
+    .filter(a => a.prix >= seuil)
+    .map(a => a.nom);
+}`},
+ {p:`Écris <code>resume(panier)</code> qui renvoie un texte comme <code>3 articles : 250</code> (nombre total d'articles = somme des <code>qte</code>, puis le prix total).`,s:`function resume(panier) {
+  
+}
+`,t:[[`resume([{prix:100,qte:2},{prix:50,qte:1}])`,`3 articles : 250`]],h:`Deux reduce, puis un template literal.`,x:`Un premier <code>reduce</code> additionne les quantités, un second additionne les prix × quantités. On assemble ensuite le texte avec un template literal.`,r:`function resume(panier) {
+  const n = panier.reduce((acc, a) => acc + a.qte, 0);
+  const t = panier.reduce((acc, a) => acc + a.prix * a.qte, 0);
+  return n + ' articles : ' + t;
+}`}]}
+];
+var L=[];W.forEach(function(w,wi){w.c.forEach(function(c,ci){c.w=wi;c.id=L.length;L.push(c)})});
+var S={done:[],xp:0};
+var KEY="jsq",ME=null;
+function loadS(){S={done:[],xp:0};try{var r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)}catch(e){}S.miss=S.miss||[];if(!S.start){S.start=Date.now();save()}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+var app=document.getElementById("app");
+function open_(id){return id===0||S.done.indexOf(id-1)>-1}
+function cur(){for(var i=0;i<L.length;i++)if(S.done.indexOf(i)<0)return i;return -1}
+function users(){try{return JSON.parse(localStorage.getItem("jsq_users")||"{}")}catch(e){return {}}}
+async function hp(s){try{var b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("jsq:"+s));return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,"0")}).join("")}catch(e){return "p"+s}}
+function enter(n){ME=n;KEY="jsq:"+n;try{localStorage.setItem("jsq_cur",n)}catch(e){}loadS();home()}
+function login(){
+ var U=users(),ns=Object.keys(U),last="";try{last=localStorage.getItem("jsq_cur")||""}catch(e){}
+ var h='<header><h1>🎮 JS Quest</h1></header><section class="plan"><h2>Connexion</h2><p class="sub">Crée un compte (pseudo + code à 4 chiffres) pour garder ta progression. Les comptes sont enregistrés dans ce navigateur, sur cet appareil.</p>';
+ if(ns.length){h+='<div class="row">';ns.forEach(function(n){h+='<button class="btn alt acc" data-n="'+n+'">👤 '+n+'</button>'});h+='</div><p></p>'}
+ h+='<label for="lu">Pseudo</label><input id="lu" maxlength="16" autocomplete="username" value="'+last+'"><label for="lp">Code à 4 chiffres</label><input id="lp" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password"><div id="lm" role="status"></div><div class="row"><button class="btn" id="li">Se connecter</button><button class="btn alt" id="lc">Créer mon compte</button></div></section>';
+ app.innerHTML=h;
+ var lm=document.getElementById("lm");
+ function err(m){lm.className="fb no";lm.textContent=m}
+ app.querySelectorAll(".acc").forEach(function(b){b.onclick=function(){document.getElementById("lu").value=b.dataset.n;document.getElementById("lp").focus()}});
+ function read(){var n=document.getElementById("lu").value.trim(),p=document.getElementById("lp").value;if(!/^[A-Za-z0-9_À-ÿ-]{2,16}$/.test(n)){err("Pseudo : 2 à 16 caractères (lettres, chiffres, _ ou -).");return null}if(!/^[0-9]{4}$/.test(p)){err("Le code doit contenir exactement 4 chiffres.");return null}return [n,p]}
+ document.getElementById("li").onclick=async function(){var r=read();if(!r)return;var u=users();if(!u[r[0]]){err("Compte introuvable. Clique sur Créer mon compte.");return}if(u[r[0]]!==await hp(r[1])){err("Code incorrect.");return}enter(r[0])};
+ document.getElementById("lc").onclick=async function(){var r=read();if(!r)return;var u=users();if(u[r[0]]){err("Ce pseudo existe déjà. Choisis-en un autre ou connecte-toi.");return}var old=null;try{old=localStorage.getItem("jsq")}catch(e){}u[r[0]]=await hp(r[1]);try{localStorage.setItem("jsq_users",JSON.stringify(u));if(old&&Object.keys(u).length===1)localStorage.setItem("jsq:"+r[0],old)}catch(e){}enter(r[0])};
+}
+var rev=false;
+var P=[[`Variables`,[0]],[`Conditions`,[1]],[`Boucles`,[2]],[`Tableaux`,[3]],[`Fonctions`,[4]],[`Objets`,[5]],[`Révision de la semaine 1`,[0,1,2,3,4,5],1],[`Textes`,[6]],[`JS moderne`,[7]],[`Erreurs et classes`,[8]],[`Théorie async/DOM + DOM pratique`,[9,10]],[`Asynchrone en pratique`,[11]],[`Reduce, Set, Map, regex, modules`,[12,13]],[`Mini-projet final + bilan`,[14],1]];
+function ids(ws){return L.filter(function(c){return ws.indexOf(c.w)>-1}).map(function(c){return c.id})}
+function dayDone(d){return ids(d[1]).every(function(i){return S.done.indexOf(i)>-1})&&(!d[2]||!S.miss.length)}
+function dayGo(d){var a=ids(d[1]),c=cur();for(var i=0;i<a.length;i++)if(S.done.indexOf(a[i])<0)return c<0?a[i]:Math.min(a[i],c);return a[0]}
+function planHtml(){
+ var t=Math.min(14,Math.floor((Date.now()-S.start)/864e5)+1),h='<section class="plan"><h2>📅 Ton plan en 14 jours</h2><p class="sub">20 à 40 min par jour : lis la leçon, essaie sans indice, lis la correction si tu bloques, puis refais le défi raté le lendemain.</p>';
+ P.forEach(function(d,i){h+='<button class="btn alt pl'+(i+1===t?' today':'')+'" data-d="'+i+'">'+(dayDone(d)?'✅':'⬜')+' Jour '+(i+1)+' : '+d[0]+(i+1===t?' (aujourd’hui)':'')+'</button>'});
+ if(S.miss.length)h+='<button class="btn" id="rv">🔁 Réviser mes erreurs ('+S.miss.length+')</button>';
+ return h+'</section>';
+}
+function home(){rev=false;
+ var n=cur(),h='<header><h1>🎮 JS Quest</h1><div class="xp">👤 '+ME+' · '+S.xp+' XP</div><button class="btn alt" id="lo">Quitter</button></header>';
+ h+='<p class="sub">'+(n<0?'Bravo, tu as terminé les '+W.length+' mondes !':S.done.length+' / '+L.length+' défis réussis. Suis le plan ou clique sur un rond.')+'</p>'+planHtml();
+ W.forEach(function(w,wi){
+  h+='<section class="world"><h2><span>'+w.e+'</span>Monde '+(wi+1)+' : '+w.t+'</h2><div class="dots">';
+  w.c.forEach(function(c){var d=S.done.indexOf(c.id)>-1,k=d?'done':(c.id===n?'cur':'');
+   h+='<button class="dot '+k+'" data-id="'+c.id+'"'+(open_(c.id)?'':' disabled')+' aria-label="Défi '+(c.id+1)+'">'+(d?'✓':(open_(c.id)?c.id+1:'🔒'))+'</button>'});
+  h+='</div></section>'});
+ h+='<p class="sub"><button class="btn alt" id="rs">Recommencer à zéro</button></p>';
+ app.innerHTML=h;
+ app.querySelectorAll(".dot").forEach(function(b){b.onclick=function(){play(+b.dataset.id)}});
+ app.querySelectorAll(".pl").forEach(function(b){b.onclick=function(){play(dayGo(P[+b.dataset.d]))}});
+ var rv=document.getElementById("rv");if(rv)rv.onclick=function(){rev=true;play(S.miss[0])};
+ document.getElementById("lo").onclick=login;
+ document.getElementById("rs").onclick=function(){if(confirm("Effacer toute ta progression ?")){S={done:[],xp:0,miss:[],start:Date.now()};save();home()}};
+ window.scrollTo(0,0);
+}
+function play(id){
+ var c=L[id],w=W[c.w],h='<header><button class="btn alt" id="bk">← Carte</button><div class="xp">'+S.xp+' XP</div></header>';
+ h+='<h2>'+w.e+' '+w.t+' · défi '+(id+1)+'/'+L.length+'</h2><div class="lesson">'+w.l+'</div>';
+ if(c.q){h+='<p><b>'+c.q+'</b></p><div class="opts">';c.o.forEach(function(o,i){h+='<button class="btn alt opt" data-i="'+i+'">'+o+'</button>'});h+='</div>'}
+ else{h+='<p><b>'+c.p+'</b></p><textarea id="ed" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Ton code">'+c.s.replace(/</g,"&lt;")+'</textarea><div class="row"><button class="btn" id="go">▶ Tester mon code</button><button class="btn alt" id="hn">💡 Indice</button></div><div id="hint" class="hint"></div>'}
+ h+='<div id="fb" role="status"></div><div class="row" id="nx"></div><div id="corr"></div>';
+ app.innerHTML=h;window.scrollTo(0,0);
+ document.getElementById("bk").onclick=home;
+ var fb=document.getElementById("fb");
+ function win(){
+  if(S.done.indexOf(id)<0){S.done.push(id);S.xp+=c.q?10:25}
+  if(rev){var mi=S.miss.indexOf(id);if(mi>-1)S.miss.splice(mi,1)}
+  save();
+  fb.className="fb ok";fb.textContent="✅ Bravo ! +"+(c.q?10:25)+" XP";
+  var nx=document.getElementById("nx");
+  nx.innerHTML=(id+1<L.length?'<button class="btn" id="nb">Défi suivant →</button>':'<button class="btn" id="nb">Terminer 🏆</button>')+'<button class="btn alt" id="cb">📖 Explication</button>';
+  document.getElementById("nb").onclick=function(){if(rev){S.miss.length?play(S.miss[0]):home()}else if(id+1<L.length)play(id+1);else home()};bindCorr();
+ }
+ function bindCorr(){document.getElementById("cb").onclick=function(){var k=document.getElementById("corr");if(k.innerHTML){k.innerHTML="";return}k.innerHTML='<div class="corr"><h3>📖 Correction détaillée</h3><p>'+c.x+'</p>'+(c.r?'<p><b>Une solution possible :</b></p><pre>'+c.r.replace(/</g,"&lt;")+'</pre>':'<p><b>Bonne réponse :</b> '+c.o[c.a]+'</p>')+'</div>'}}
+ var tries=0;
+ function wrong(m){tries++;if(S.miss.indexOf(id)<0){S.miss.push(id);save()}fb.className="fb no";fb.textContent=m+(tries<2?" Réessaie : la correction se débloque après 2 essais ratés.":"");if(tries>=2){document.getElementById("nx").innerHTML='<button class="btn alt" id="cb">📖 Voir la correction</button>';bindCorr()}}
+ if(c.q){app.querySelectorAll(".opt").forEach(function(b){b.onclick=function(){
+  if(+b.dataset.i===c.a)win();else wrong("Pas tout à fait, essaie encore !")}})}
+ else{
+  var ed=document.getElementById("ed");
+  ed.onkeydown=function(e){if(e.key==="Tab"){e.preventDefault();var s=ed.selectionStart;ed.value=ed.value.slice(0,s)+"  "+ed.value.slice(ed.selectionEnd);ed.selectionStart=ed.selectionEnd=s+2}};
+  document.getElementById("hn").onclick=function(){document.getElementById("hint").textContent="Indice : "+c.h};
+  document.getElementById("go").onclick=async function(){
+   var code=ed.value;
+   for(var i=0;i<c.t.length;i++){
+    var t=c.t[i],v;
+    try{v=await new Function('"use strict";'+code+"\n;return ("+t[0]+");")()}
+    catch(e){wrong("Erreur dans ton code : "+e.message);return}
+    if(v!==t[1]){wrong("Test raté : "+t[0]+" devrait donner "+JSON.stringify(t[1])+", mais ton code donne "+JSON.stringify(v)+".");return}
+   }
+   win();
+  };
+ }
+}
+login();
+</script>
+</body>
+</html>
